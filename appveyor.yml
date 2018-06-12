@@ -4,7 +4,6 @@ shallow_clone: true
 
 install:
   - perl -V
-  - cinst wixtoolset
 
 test: off
 
