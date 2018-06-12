@@ -4,7 +4,7 @@ shallow_clone: true
 
 install:
   - perl -V
-  - cinst wixtoolset
+  - cinst wixtoolset --install-dir="C:\WixToolSet"
 
 test: off
 
