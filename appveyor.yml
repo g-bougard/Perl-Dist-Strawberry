@@ -3,7 +3,7 @@ version: '{branch}-build-{build}'
 shallow_clone: true
 
 install:
-  - cinst wix
+  - cinst wixtoolset
 
 test: off
 
