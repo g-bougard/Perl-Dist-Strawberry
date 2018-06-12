@@ -19,5 +19,5 @@ build_script:
   - dir
 
 artifacts:
-  - path: C:\strawberry_build\output\*.zip
+  - path: ..\..\strawberry_build\output\*.zip
     name: logs
