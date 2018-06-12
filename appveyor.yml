@@ -9,4 +9,11 @@ test: off
 
 build_script:
   - perl Build.PL
-  - devel.utils/build-5.26.bat
+  - Build installdeps
+  - Build manifest
+  - dir
+  - cd devel.utils
+  - build-5.26.bat
+  - dir
+  - cd ..
+  - dir
