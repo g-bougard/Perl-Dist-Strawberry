@@ -14,7 +14,7 @@ build_script:
   - Build manifest
   - dir
   - cd devel.utils
-  - build-5.26.bat
+  - build-5.26-test.bat
   - dir
   - cd ..
   - dir
