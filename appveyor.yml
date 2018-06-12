@@ -3,14 +3,14 @@ version: '{branch}-build-{build}'
 shallow_clone: true
 
 install:
+  - perl -V
   - cinst wixtoolset
-  - perl --version
 
 test: off
 
 build_script:
   - perl Build.PL
-  - Build installdeps --cpan_client 'cpan -T'
+  - Build installdeps --cpan_client "cpan -T"
   - Build manifest
   - dir
   - cd devel.utils
