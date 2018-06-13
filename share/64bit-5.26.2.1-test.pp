@@ -233,8 +233,8 @@
             qw/ strict warnings integer lib UNIVERSAL::require /,
             qw/ IO::Capture::Stderr Parallel::ForkManager /,
             qw/ Parse::EDID URI URI::Escape Cwd English Fcntl Getopt::Long /,
-            { module=>'Net::Write::Layer2', ignore_testfailure=>1 },
-            { module=>'Net::Pcap', ignore_testfailure=>1 },
+            # TODO Net::Pcap needs WinPcap driver installed
+            #qw/ Net::Pcap' Net::Write::Layer2/,
             qw/ Encode Encode::Byte Encode::CN Encode::JP Encode::KR Encode::TW /,
             qw/ Encode::Unicode utf8 /,
             qw/ Memoize MIME::Base64 Pod::Usage POSIX Scalar::Util Storable /,

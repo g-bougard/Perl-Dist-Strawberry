@@ -8,6 +8,8 @@ install:
 test: off
 
 build_script:
+  - mv -vf "C:\OpenSSL-Win32" "C:\OpenSSL-Win32.dont-use"
+  - mv -vf "C:\OpenSSL-Win64" "C:\OpenSSL-Win64.dont-use"
   - perl Build.PL
   - Build installdeps --cpan_client "cpan -T"
   - Build manifest
