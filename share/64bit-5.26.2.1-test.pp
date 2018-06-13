@@ -110,8 +110,6 @@
             { module=>'IPC-System-Simple', ignore_testfailure=>1 }, #XXX-TODO t/07_taint.t fails https://metacpan.org/release/IPC-System-Simple
             qw/ IPC-Run3 /,
 
-            { module=>'LWP::UserAgent', skiptest=>1 }, # XXX-HACK: 6.08 is broken
-
             # gdbm / db related
             qw/ BerkeleyDB DB_File DBM-Deep /,
 
@@ -128,14 +126,15 @@
             'ExtUtils::PkgConfig',
 
             # win32 related
-            qw/Win32API::Registry Win32::TieRegistry/,
+            qw/ Win32 Win32API::Registry Win32::TieRegistry /,
             { module=>'Win32::OLE',         ignore_testfailure=>1 }, #XXX-TODO: ! Testing Win32-OLE-0.1711 failed
             { module=>'Win32::API',         ignore_testfailure=>1 }, #XXX-TODO: https://rt.cpan.org/Public/Bug/Display.html?id=107450
-            'Win32::Exe',
+            qw/ Win32::Exe Win32::Unicode::File /,
             { module=>'<package_url>/kmx/perl-modules-patched/Win32-Pipe-0.025_patched.tar.gz' }, #XXX-FIXME 
             { module=>'<package_url>/kmx/perl-modules-patched/Win32-Daemon-20131206_patched.tar.gz' }, #XXX-FIXME
             qw/ Win32-EventLog Win32-Process Win32-WinError Win32-File-Object Win32-UTCFileTime /,
             qw/ Win32-ShellQuote Win32::Console Win32::Console::ANSI Win32::Job Win32::ServiceManager Win32::Service /,
+            qw/ Win32::OLE::Const Win32::OLE::Variant /,
             qw/ Sys::Syslog /,
 
             # term related
@@ -145,29 +144,35 @@
 
             # compression
             { module=>'Archive::Zip', ignore_testfailure=>1 }, #XXX-TODO: https://rt.cpan.org/Public/Bug/Display.html?id=101442
-            qw/ IO-Compress-Lzma Compress-unLZMA Archive::Extract /,
+            qw/ IO-Compress-Lzma Compress-unLZMA Archive::Extract Compress::Zlib /,
 
             # file related
+            qw/ File::Basename File::Glob File::Find File::Glob File::Path File::Spec File::stat File::Temp /,
             qw/ File-Find-Rule File-HomeDir File-Listing File-Remove File-ShareDir File-Which File::Map/,
             'http://cpan.metacpan.org/authors/id/D/DM/DMUEY/File-Copy-Recursive-0.38.tar.gz', # https://rt.cpan.org/Ticket/Display.html?id=123971 https://rt.cpan.org/Ticket/Display.html?id=123971
             qw/ File::Slurp File::Slurper /,
-            qw/ IO::All Path::Tiny Path::Class /,
+            qw/ IO::Handle IO::All Path::Tiny Path::Class /,
 
-            # SSL & SSH & telnet
-            'Net-SSLeay',
-            { module=>'IO-Socket-SSL', env=>{ 'HARNESS_SUBCLASS'=>'TAP::Harness::Restricted', 'HARNESS_SKIP'=>'t/mitm.t t/verify_fingerprint.t t/session_ticket.t' } },
+            # SSL & SSH
+            { module=>'Net-SSLeay', ignore_testfailure=>1 }, #XXX-TODO Fix build
+            { module=>'IO-Socket-SSL', ignore_testfailure=>1 , env=>{ 'HARNESS_SUBCLASS'=>'TAP::Harness::Restricted', 'HARNESS_SKIP'=>'t/mitm.t t/verify_fingerprint.t t/session_ticket.t' } },
             #https://github.com/noxxi/p5-io-socket-ssl/issues/30
-            qw/ Net-SSH2 Net::Telnet /,
+            qw/ Net-SSH2 /,
 
             # network
-            qw/ IO::Socket::IP IO::Socket::INET6 IO::Socket::Socks /,
-            qw/ HTTP-Server-Simple /,
-            qw/ LWP::UserAgent /,
-            { module=>'LWP::Protocol::https', env=>{ 'HARNESS_SUBCLASS'=>'TAP::Harness::Restricted', 'HARNESS_SKIP'=>'t/https_proxy.t' } }, #https://rt.perl.org/Ticket/Display.html?id=132863
-            { module=>'<package_url>/kmx/perl-modules-patched/Crypt-SSLeay-0.72_patched.tar.gz' }, #XXX-FIXME
+            qw/ Socket IO::Socket::IP IO::Socket::INET6 IO::Socket::Socks /,
+            qw/ Net::IP HTTP::Daemon HTTP::Proxy Net::SNMP Net::Ping Net::NBName/,
+            qw/ HTTP-Server-Simple HTTP::Server::Simple::Authen /,
+            qw/ Net::Domain Net::hostent Net::HTTPS Sys::Hostname /,
+            qw/ Net::SNMP::Security::USM Net::SNMP::Transport::IPv4::TCP /,
+            qw/ Net::SNMP::Transport::IPv6::TCP Net::SNMP::Transport::IPv6::UDP /,
+            qw/ HTTP::Cookies HTTP::Headers HTTP::Request HTTP::Status /,
+            qw/ LWP LWP::UserAgent /,
+            { module=>'LWP::Protocol::https', ignore_testfailure=>1 , env=>{ 'HARNESS_SUBCLASS'=>'TAP::Harness::Restricted', 'HARNESS_SKIP'=>'t/https_proxy.t' } }, #https://rt.perl.org/Ticket/Display.html?id=132863
+            { module=>'<package_url>/kmx/perl-modules-patched/Crypt-SSLeay-0.72_patched.tar.gz', ignore_testfailure=>1 }, #XXX-FIXME
 
             # XML & co.
-            qw/ XML-LibXML XML-LibXSLT XML-Parser XML-Simple /,
+            qw/ XML-LibXML XML-LibXSLT XML-Parser XML-Simple XML::TreePP /,
 
             # data/text processing
             { module=>'IO::Stringy', env=>{ 'HARNESS_SUBCLASS'=>'TAP::Harness::Restricted', 'HARNESS_SKIP'=>'t/IO_InnerFile.t' } }, #https://rt.cpan.org/Public/Bug/Display.html?id=103895
@@ -212,7 +217,7 @@
 
             # templates
             { module=>'Template', env=>{ 'HARNESS_SUBCLASS'=>'TAP::Harness::Restricted', 'HARNESS_SKIP'=>'t/process_dir.t' } }, #XXX-NEW 5.26.0 https://github.com/abw/Template2/pull/67
-            qw/ Template-Tiny /,
+            qw/ Template-Tiny Text::Template /,
 
             # OO - others
             qw/ Class::Accessor Class::Accessor::Lite Class::XSAccessor Class::Tiny Object::Tiny /,
@@ -223,6 +228,19 @@
             # misc
             qw/ IO::String /,
             qw/ Unicode::UTF8 /,
+
+            # FusionInventory Agent
+            qw/ strict warnings integer lib UNIVERSAL::require /,
+            qw/ IO::Capture::Stderr Parallel::ForkManager /,
+            qw/ Parse::EDID URI URI::Escape Cwd English Fcntl Getopt::Long /,
+            { module=>'Net::Write::Layer2', ignore_testfailure=>1 },
+            { module=>'Net::Pcap', ignore_testfailure=>1 },
+            qw/ Encode Encode::Byte Encode::CN Encode::JP Encode::KR Encode::TW /,
+            qw/ Encode::Unicode utf8 /,
+            qw/ Memoize MIME::Base64 Pod::Usage POSIX Scalar::Util Storable /,
+            qw/ Thread::Queue Thread::Semaphore threads threads::shared /,
+            qw/ Tie::Hash::NamedCapture Time::HiRes Time::Local Time::localtime /,
+            qw/ User::pwent /,
         ],
 
     },
