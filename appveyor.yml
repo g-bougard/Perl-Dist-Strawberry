@@ -21,5 +21,9 @@ build_script:
   - dir
 
 artifacts:
-  - path: tmp_build\output\*.zip
+  - path: tmp_build\output\*debug_dir.zip,tmp_build\output\*LOG.zip,
     name: logs
+  - path: tmp_build\output\strawberry-perl*-64bit.zip,tmp_build\output\strawberry-perl*-64bit-portable.zip,tmp_build\output\strawberry-perl*-32bit.zip,tmp_build\output\strawberry-perl*-32bit-portable.zip
+    name: zip
+  - path: tmp_build\output\strawberry-perl*-64bit.msi
+    name: msi
