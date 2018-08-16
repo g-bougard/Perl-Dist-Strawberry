@@ -6,7 +6,7 @@
 # <image_dir>     is placeholder for c:\strawberry
 
 {
-  app_version     => '5.26.2.1', #BEWARE: do not use '.0.0' in the last two version digits
+  app_version     => '5.28.0.1', #BEWARE: do not use '.0.0' in the last two version digits
   bits            => 64,
   beta            => 0,
   app_fullname    => 'Strawberry Perl light (64-bit)',
@@ -18,11 +18,8 @@
         plugin  => 'Perl::Dist::Strawberry::Step::BinaryToolsAndLibs',
         install_packages => {
             #tools
-           #'dmake'         => '<package_url>/kmx/64_tools/64bit_dmake-4.12.2-bin_20140810.zip',
-           #'dmake'         => '<package_url>/kmx/64_tools/64bit_dmake-fake_20170512.zip',
             'dmake'         => '<package_url>/kmx/64_tools/64bit_dmake-warn_20170512.zip',
             'pexports'      => '<package_url>/kmx/64_tools/64bit_pexports-0.47-bin_20170426.zip',
-           #'patch'         => '<package_url>/kmx/64_tools/64bit_patch-2.7.5-bin_20170512.zip', #XXX-BROKEN
             'patch'         => '<package_url>/kmx/64_tools/64bit_patch-2.5.9-7-bin_20100110_UAC.zip',
             #gcc, gmake, gdb & co.
             'gcc-toolchain' => { url=>'<package_url>/kmx/64_gcctoolchain/mingw64-w64-gcc7.1.0_20170512.zip', install_to=>'c' },
@@ -69,17 +66,16 @@
     ### NEXT STEP ###########################
     {
         plugin     => 'Perl::Dist::Strawberry::Step::InstallPerlCore',
-        url        => 'http://cpan.metacpan.org/authors/id/S/SH/SHAY/perl-5.26.2.tar.bz2',
+        url        => 'http://cpan.metacpan.org/authors/id/X/XS/XSAWYERX/perl-5.28.0.tar.gz',
         cf_email   => 'strawberry-perl@project', #IMPORTANT: keep 'strawberry-perl' before @
         perl_debug => 0,    # can be overridden by --perl_debug=N option
         perl_64bitint => 1, # ignored on 64bit, can be overridden by --perl_64bitint | --noperl_64bitint option
         buildoptextra => '-D__USE_MINGW_ANSI_STDIO',
         patch => { #DST paths are relative to the perl src root
             '<dist_sharedir>/msi/files/perlexe.ico'             => 'win32/perlexe.ico',
-            '<dist_sharedir>/perl-5.26/win32_config.gc.tt'      => 'win32/config.gc',
-            '<dist_sharedir>/perl-5.26/perlexe.rc.tt'           => 'win32/perlexe.rc',
-            '<dist_sharedir>/perl-5.26/win32_config_H.gc'       => 'win32/config_H.gc', # enables gdbm/ndbm/odbm
-            '<dist_sharedir>/perl-5.26/win32_FindExt.pm'        => 'win32/FindExt.pm',  # enables gdbm/ndbm/odbm
+            '<dist_sharedir>/perl-5.28/win32_config.gc.tt'      => 'win32/config.gc',
+            '<dist_sharedir>/perl-5.28/perlexe.rc.tt'           => 'win32/perlexe.rc',
+            '<dist_sharedir>/perl-5.28/win32_config_H.gc'       => 'win32/config_H.gc', # enables gdbm/ndbm/odbm
         },
         license => { #SRC paths are relative to the perl src root
             'Readme'   => '<image_dir>/licenses/perl/Readme',
@@ -91,32 +87,32 @@
     {
         plugin => 'Perl::Dist::Strawberry::Step::UpgradeCpanModules',
         exceptions => [
-          # possible 'do' options: ignore_testfailure | skiptest | skip
-          # e.g. { do=>'ignore_testfailure', distribution=>'ExtUtils-MakeMaker-6.72' },
-          { do=>'ignore_testfailure', distribution=>qr/^IPC-Cmd-/ },
-          { do=>'ignore_testfailure', distribution=>qr/^Archive-Tar-/ }, # 2.12 fails
-          { do=>'ignore_testfailure', distribution=>qr/^threads-/ },     # 2.09 fails
-          { do=>'ignore_testfailure', distribution=>qr/^ExtUtils-Install-/ },     # 2.10 fails on 5.26.0
+          # possible 'do' options: ignore_testfailure | skiptest | skip - e.g. 
+          #{ do=>'ignore_testfailure', distribution=>'ExtUtils-MakeMaker-6.72' },
+          #{ do=>'ignore_testfailure', distribution=>qr/^IPC-Cmd-/ },
         ]
     },
     ### NEXT STEP ###########################
     {
         plugin => 'Perl::Dist::Strawberry::Step::InstallModules',
         modules => [
-            { module=>'Capture::Tiny', ignore_testfailure=>1 }, #XXX-TODO https://github.com/dagolden/Capture-Tiny/issues/29
+            'Capture::Tiny',            #this used to fail
             'TAP::Harness::Restricted', #to be able to skip only some tests
             # IPC related
             { module=>'IPC-Run', skiptest=>1 }, #XXX-TODO trouble with 'Terminating on signal SIGBREAK(21)' https://metacpan.org/release/IPC-Run
             { module=>'IPC-System-Simple', ignore_testfailure=>1 }, #XXX-TODO t/07_taint.t fails https://metacpan.org/release/IPC-System-Simple
             qw/ IPC-Run3 /,
 
+            { module=>'LWP::UserAgent', skiptest=>1 }, # XXX-HACK: 6.08 is broken
+
             # gdbm / db related
             qw/ BerkeleyDB DB_File DBM-Deep /,
 
             #removed from core in 5.20
             qw/ Module::Build /,
+            { module=>'Archive::Extract',  ignore_testfailure=>1 }, #XXX-TODO-5.28/64bit
             #XXX-TODO https://rt.cpan.org/Public/Bug/Display.html?id=116479
-            qw/ Archive::Extract Log::Message Module::Pluggable Object::Accessor Term::UI /,
+            qw/ Log::Message Module::Pluggable Object::Accessor Term::UI /,
 
             # JSON::PP
             qw/ JSON::PP /,
@@ -127,7 +123,7 @@
 
             # win32 related
             qw/ Win32 Win32API::Registry Win32::TieRegistry /,
-            { module=>'Win32::OLE',         ignore_testfailure=>1 }, #XXX-TODO: ! Testing Win32-OLE-0.1711 failed
+            { module=>'Win32::OLE',         ignore_testfailure=>1 }, #XXX-TODO-5.28: Testing Win32-OLE-0.1712 failed
             { module=>'Win32::API',         ignore_testfailure=>1 }, #XXX-TODO: https://rt.cpan.org/Public/Bug/Display.html?id=107450
             qw/ Win32::Exe Win32::Unicode::File /,
             { module=>'<package_url>/kmx/perl-modules-patched/Win32-Pipe-0.025_patched.tar.gz' }, #XXX-FIXME 
@@ -143,8 +139,8 @@
             { module=>'Term::ReadLine::Perl', env=>{ PERL_MM_NONINTERACTIVE=>1 } },
 
             # compression
-            { module=>'Archive::Zip', ignore_testfailure=>1 }, #XXX-TODO: https://rt.cpan.org/Public/Bug/Display.html?id=101442
-            qw/ IO-Compress-Lzma Compress-unLZMA Archive::Extract Compress::Zlib /,
+            qw/ Archive::Zip IO-Compress-Lzma Compress-unLZMA Archive::Extract /,
+            'Compress::Zlib',
 
             # file related
             qw/ File::Basename File::Glob File::Find File::Glob File::Path File::Spec File::stat File::Temp /,
@@ -182,17 +178,13 @@
             qw/ DBI DBD-ODBC DBD-CSV /,
 
             # crypto
-            qw/ CryptX Crypt::OpenSSL::Bignum Crypt::OpenSSL::DSA /,
-            { module=>'<package_url>/kmx/perl-modules-patched/Crypt-OpenSSL-Random-0.11_patched.tar.gz' }, #XXX-FIXME
-            { module=>'<package_url>/kmx/perl-modules-patched/Crypt-OpenSSL-RSA-0.28_patched.tar.gz' },    #XXX-FIXME
-            { module=>'<package_url>/kmx/perl-modules-patched/Crypt-OpenSSL-X509-1.808_patched.tar.gz' },  #XXX-FIXME
+            qw/ CryptX Crypt::OpenSSL::Bignum Crypt::OpenSSL::DSA Crypt-OpenSSL-RSA Crypt-OpenSSL-Random Crypt-OpenSSL-X509 /,
             'KMX/Crypt-OpenSSL-AES-0.05.tar.gz', #XXX-FIXME patched https://metacpan.org/pod/Crypt::OpenSSL::AES  https://rt.cpan.org/Public/Bug/Display.html?id=77605
             #Crypt-SMIME ?
             qw/ Crypt::CBC Crypt::Blowfish Crypt::CAST5_PP Crypt::DES Crypt::DES_EDE3 Crypt::DSA Crypt::IDEA Crypt::Rijndael Crypt::Twofish Crypt::Serpent Crypt::RC6 /,
             qw/ Digest-MD2 Digest-MD5 Digest-SHA Digest-SHA1 Crypt::RIPEMD160 Digest::Whirlpool Digest::HMAC Digest::CMAC /,
-            'Alt::Crypt::RSA::BigInt',                                                          #XXX-TODO: a hack Crypt-RSA without Math::PARI - https://metacpan.org/release/Crypt-RSA
-            qw/ Crypt-DSA Crypt::DSA::GMP /,
-            #{ module=>'Crypt::Random', ignore_testfailure=>1 }, #fails on 64bit + https://rt.cpan.org/Public/Bug/Display.html?id=99880
+            'Alt::Crypt::RSA::BigInt',  #hack Crypt-RSA without Math::PARI - https://metacpan.org/release/Crypt-RSA
+            'Crypt::DSA::GMP',
 
             qw/ Bytes::Random::Secure Crypt::OpenPGP /,
             #qw/ Module::Signature /, #XXX-TODO still not able to properly handle CRLF - https://metacpan.org/release/Module-Signature
@@ -227,7 +219,7 @@
 
             # misc
             qw/ IO::String /,
-            qw/ Unicode::UTF8 /,
+            { module=>'Unicode::UTF8', ignore_testfailure=>1 }, #XXX-TODO-5.28
 
             # FusionInventory Agent
             qw/ strict warnings integer lib UNIVERSAL::require /,
