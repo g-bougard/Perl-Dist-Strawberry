@@ -17,7 +17,7 @@ build_script:
   - Build manifest
   - dir
   - cd devel.utils
-  - build-5.28-test.bat
+  - build-fia-2.5.bat
   - dir
   - cd ..
   - dir
